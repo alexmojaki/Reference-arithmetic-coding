@@ -129,8 +129,8 @@ public abstract class ArithmeticCodingTest {
 	/*---- Abstract methods ----*/
 	
 	// Compression method that needs to be supplied by a subclass.
-	protected abstract ByteTransformer getCompressor();
+	protected abstract Compressor getCompressor();
 	
 	// Decompression method that needs to be supplied by a subclass.
-	protected abstract ByteTransformer getDecompressor();
+	protected abstract DeCompressor getDecompressor();
 }

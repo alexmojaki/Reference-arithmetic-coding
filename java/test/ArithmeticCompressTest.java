@@ -12,12 +12,12 @@
 public class ArithmeticCompressTest extends ArithmeticCodingTest {
 	
 	@Override
-	protected ByteTransformer getCompressor() {
+	protected Compressor getCompressor() {
 		return new ArithmeticCompress();
 	}
 	
 	@Override
-	protected ByteTransformer getDecompressor() {
+	protected DeCompressor getDecompressor() {
 		return new ArithmeticDecompress();
 	}
 	
