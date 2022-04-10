@@ -6,9 +6,8 @@
  * https://github.com/nayuki/Reference-arithmetic-coding
  */
 
-import inputstreams.InputStreamFactory;
-
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 
