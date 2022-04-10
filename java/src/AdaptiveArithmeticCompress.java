@@ -6,9 +6,8 @@
  * https://github.com/nayuki/Reference-arithmetic-coding
  */
 
-import inputstreams.InputStreamFactory;
-
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 /**
@@ -20,23 +19,14 @@ import java.io.*;
  * frequency table and updates it after each byte decoded. It is by design that the compressor and
  * decompressor have synchronized states, so that the data can be decompressed properly.</p>
  */
-public class AdaptiveArithmeticCompress extends ByteTransformer {
+public class AdaptiveArithmeticCompress extends Compressor {
 	
 	public static void main(String[] args) throws IOException {
 		new AdaptiveArithmeticCompress().commandLineMain(args);
 	}
 
 	@Override
-	public void transformStream(InputStreamFactory inputStreamFactory, OutputStream outputStream) throws IOException {
-		try (InputStream in = inputStreamFactory.getStream();
-				BitOutputStream out = new BitOutputStream(outputStream)) {
-			compress(in, out);
-		}
-	}
-	
-	
-	// To allow unit testing, this method is package-private instead of private.
-	static void compress(InputStream in, BitOutputStream out) throws IOException {
+	protected void compress(InputStream in, BitOutputStream out) throws IOException {
 		FlatFrequencyTable initFreqs = new FlatFrequencyTable(257);
 		FrequencyTable freqs = new SimpleFrequencyTable(initFreqs);
 		ArithmeticEncoder enc = new ArithmeticEncoder(32, out);

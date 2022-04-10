@@ -21,7 +21,8 @@ import java.io.OutputStream;
  * values and 1 symbol for the EOF marker. The compressed file format starts with a list
  * of 256 symbol frequencies, and then followed by the arithmetic-coded data.</p>
  */
-public class ArithmeticCompress extends ByteTransformer {
+public class ArithmeticCompress extends Compressor {
+	private FrequencyTable freqs;
 	
 	public static void main(String[] args) throws IOException {
 		new ArithmeticCompress().commandLineMain(args);
@@ -33,13 +34,10 @@ public class ArithmeticCompress extends ByteTransformer {
 		// Read input file once to compute symbol frequencies
 		FrequencyTable freqs = getFrequencies(inputStreamFactory.getStream());
 		freqs.increment(256);  // EOF symbol gets a frequency of 1
+		this.freqs = freqs;
 		
 		// Read input file again, compress with arithmetic coding, and write output file
-		try (InputStream in = inputStreamFactory.getStream();
-				BitOutputStream out = new BitOutputStream(outputStream)) {
-			writeFrequencies(out, freqs);
-			compress(freqs, in, out);
-		}
+		super.transformStream(inputStreamFactory, outputStream);
 	}
 	
 	
@@ -59,15 +57,15 @@ public class ArithmeticCompress extends ByteTransformer {
 	}
 	
 	
-	// To allow unit testing, this method is package-private instead of private.
-	static void writeFrequencies(BitOutputStream out, FrequencyTable freqs) throws IOException {
+	private static void writeFrequencies(BitOutputStream out, FrequencyTable freqs) throws IOException {
 		for (int i = 0; i < 256; i++)
 			writeInt(out, 32, freqs.get(i));
 	}
 	
 	
-	// To allow unit testing, this method is package-private instead of private.
-	static void compress(FrequencyTable freqs, InputStream in, BitOutputStream out) throws IOException {
+	@Override
+	protected void compress(InputStream in, BitOutputStream out) throws IOException {
+		writeFrequencies(out, freqs);
 		ArithmeticEncoder enc = new ArithmeticEncoder(32, out);
 		while (true) {
 			int symbol = in.read();

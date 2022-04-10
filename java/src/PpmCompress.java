@@ -19,7 +19,7 @@ import java.util.Arrays;
  * <p>Note that both the compressor and decompressor need to use the same PPM context modeling logic.
  * The PPM algorithm can be thought of as a powerful generalization of adaptive arithmetic coding.</p>
  */
-public final class PpmCompress extends ByteTransformer {
+public final class PpmCompress extends Compressor {
 	
 	// Must be at least -1 and match PpmDecompress. Warning: Exponential memory usage at O(257^n).
 	private static final int MODEL_ORDER = 3;
@@ -31,16 +31,7 @@ public final class PpmCompress extends ByteTransformer {
 	
 	
 	@Override
-	public void transformStream(InputStreamFactory inputStreamFactory, OutputStream outputStream) throws IOException {
-		try (InputStream in = inputStreamFactory.getStream();
-				BitOutputStream out = new BitOutputStream(outputStream)) {
-			compress(in, out);
-		}
-	}
-	
-	
-	// To allow unit testing, this method is package-private instead of private.
-	static void compress(InputStream in, BitOutputStream out) throws IOException {
+	protected void compress(InputStream in, BitOutputStream out) throws IOException {
 		// Set up encoder and model. In this PPM model, symbol 256 represents EOF;
 		// its frequency is 1 in the order -1 context but its frequency
 		// is 0 in all other contexts (which have non-negative order).
